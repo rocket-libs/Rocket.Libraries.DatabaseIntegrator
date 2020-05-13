@@ -1,0 +1,41 @@
+name: Publish Package
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+    - name: Checkout repository
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+    - name: Package
+      run: dotnet pack  --configuration Release
+    - name: Publish
+      with:
+        source-url: https://nuget.pkg.github.com/rocket-libs/index.json 
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      
+    - name: Build solution and generate NuGet package
+      run: |  
+        cd <project>
+        dotnet pack -c Release -o out  
+
+    - name: Push generated package to GitHub registry
+      run: dotnet nuget push ./<project>/out/*.nupkg --skip-duplicate --no-symbols true
