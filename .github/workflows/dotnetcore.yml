@@ -25,4 +25,4 @@ jobs:
         run: |  
           cd Rocket.Libraries.DatabaseIntegrator
           dotnet pack -c Release -o out  
-          dotnet nuget push ./out/*.nupkg -k oy2flx6fxs5r74hc3nhq2zsduv3edi5utovzukqd3dsfpi -s https://api.nuget.org/v3/index.json
+          dotnet nuget push ./out/*.nupkg -k ${{secrets.Nuget_Key}} -s https://api.nuget.org/v3/index.json
