@@ -27,6 +27,7 @@ jobs:
     - name: Package
       run: dotnet pack  --configuration Release
     - name: Publish
+      uses: actions/setup-dotnet@v1
       with:
         source-url: https://nuget.pkg.github.com/rocket-libs/index.json 
       env:
