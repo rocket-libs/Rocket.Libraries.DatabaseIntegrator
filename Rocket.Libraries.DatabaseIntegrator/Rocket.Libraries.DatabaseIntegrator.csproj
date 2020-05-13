@@ -7,9 +7,14 @@
     <Version>1.0.0-beta02</Version>
   </PropertyGroup>
 
-  <ItemGroup>
+  <PropertyGroup>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/rocket-libs/Rocket.Libraries.DatabaseIntegrator</RepositoryUrl>
-  </ItemGroup>
+    <Authors>Nyingi Maina</Authors>
+    <Company>Rocket Libraries</Company>
+    <PackageDescription>Library with convenience functionality to make working with databases via Dapper ORM easy</PackageDescription>
+  </PropertyGroup>
+  
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.3" />
