@@ -27,4 +27,4 @@ jobs:
           dotnet pack -c Release -o out  
 
       - name: Push To Nuget registry
-        run: dotnet nuget push ./out/*.nupkg -k $Nuget_Key
+        run: dotnet nuget push ./out/*.nupkg -k oy2flx6fxs5r74hc3nhq2zsduv3edi5utovzukqd3dsfpi -s https://api.nuget.org/v3/index.json
