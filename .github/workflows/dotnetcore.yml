@@ -23,7 +23,7 @@ jobs:
         with:
           source-url: https://nuget.pkg.github.com/rocket-libs/index.json
         env:
-          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}        
+          NUGET_AUTH_TOKEN: ${{secrets.Blah}}        
 
       - name: Build solution and generate NuGet package
         run: |  
