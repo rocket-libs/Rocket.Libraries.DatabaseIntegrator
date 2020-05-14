@@ -21,7 +21,7 @@
 
         private readonly ISessionProvider<long> sessionProvider;
         private readonly IConnectionProvider connectionOpener;
-        private readonly IEventHandlers<TId> eventHandlers;
+        private readonly IDatabaseIntegrationEventHandlers<TId> eventHandlers;
         private readonly Action<string> fnLogSelects;
 
         private IDbTransaction _transaction;
@@ -37,7 +37,7 @@
             ILogger<DatabaseHelper<TId>> logger,
             ISessionProvider<long> sessionProvider,
             IConnectionProvider connectionProvider,
-            IEventHandlers<TId> eventHandlers)
+            IDatabaseIntegrationEventHandlers<TId> eventHandlers)
         {
             this.logger = logger;
             this.sessionProvider = sessionProvider;
