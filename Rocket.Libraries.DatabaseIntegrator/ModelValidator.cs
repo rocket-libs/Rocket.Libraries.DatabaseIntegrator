@@ -5,8 +5,8 @@ using Rocket.Libraries.FormValidationHelper.Attributes;
 
 namespace Rocket.Libraries.DatabaseIntegrator
 {
-    internal class ModelValidator<TModel,TId> : FormValidationBase<TModel> 
-        where TModel : ModelBase<TId>
+    internal class ModelValidator<TModel,TIdentifier> : FormValidationBase<TModel> 
+        where TModel : ModelBase<TIdentifier>
     {
         public override async Task<ImmutableList<ValidationError>> ValidateAsync(TModel unValidatedObject)
         {

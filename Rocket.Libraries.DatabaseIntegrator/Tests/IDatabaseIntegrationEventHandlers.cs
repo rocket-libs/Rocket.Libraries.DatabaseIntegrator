@@ -3,12 +3,12 @@ using Rocket.Libraries.Qurious;
 
 namespace Rocket.Libraries.DatabaseIntegrator.Tests
 {
-    public interface IDatabaseIntegrationEventHandlers<TId>
+    public interface IDatabaseIntegrationEventHandlers<TIdentifier>
     {
         Action<QBuilder> BeforeSelect { get; }
 
-        Action<ModelBase<TId>> BeforeCreate { get; }
+        Action<ModelBase<TIdentifier>> BeforeCreate { get; }
 
-        Action<ModelBase<TId>> BeforeUpdate { get; }
+        Action<ModelBase<TIdentifier>> BeforeUpdate { get; }
     }
 }

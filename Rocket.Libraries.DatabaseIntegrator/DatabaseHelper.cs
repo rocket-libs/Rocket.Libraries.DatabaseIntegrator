@@ -15,13 +15,13 @@
     using Rocket.Libraries.Sessions.SessionProvision;
     using Rocket.Libraries.Validation.Services;
 
-    public class DatabaseHelper<TId> : IDatabaseHelper<TId>
+    public class DatabaseHelper<TIdentifier> : IDatabaseHelper<TIdentifier>
     {
-        private readonly ILogger<DatabaseHelper<TId>> logger;
+        private readonly ILogger<DatabaseHelper<TIdentifier>> logger;
 
         private readonly ISessionProvider<long> sessionProvider;
         private readonly IConnectionProvider connectionOpener;
-        private readonly IDatabaseIntegrationEventHandlers<TId> eventHandlers;
+        private readonly IDatabaseIntegrationEventHandlers<TIdentifier> eventHandlers;
         private readonly Action<string> fnLogSelects;
 
         private IDbTransaction _transaction;
@@ -34,10 +34,10 @@
 
         public DatabaseHelper (
             IOptions<DatabaseConnectionSettings> DatabaseConnectionSettingsOptions,
-            ILogger<DatabaseHelper<TId>> logger,
+            ILogger<DatabaseHelper<TIdentifier>> logger,
             ISessionProvider<long> sessionProvider,
             IConnectionProvider connectionProvider,
-            IDatabaseIntegrationEventHandlers<TId> eventHandlers)
+            IDatabaseIntegrationEventHandlers<TIdentifier> eventHandlers)
         {
             this.logger = logger;
             this.sessionProvider = sessionProvider;
@@ -79,7 +79,7 @@
 
         [ExcludeFromCoverage]
         public async Task<ImmutableList<TModel>> GetManyAsync<TModel> (QBuilder qbuilder)
-        where TModel : ModelBase<TId>
+        where TModel : ModelBase<TIdentifier>
         {
             ApplyOnBeforeSelectActions (qbuilder);
             var query = qbuilder.Build ();
@@ -96,7 +96,7 @@
 
         [ExcludeFromCoverage]
         public async Task<TModel> GetSingleAsync<TModel> (QBuilder qbuilder)
-        where TModel : ModelBase<TId>
+        where TModel : ModelBase<TIdentifier>
 
             {
                 ApplyOnBeforeSelectActions (qbuilder);
@@ -105,7 +105,7 @@
             }
 
         public async Task SaveAsync<TModel> (TModel model)
-        where TModel : ModelBase<TId>
+        where TModel : ModelBase<TIdentifier>
         {
             if (model.IsNew)
             {

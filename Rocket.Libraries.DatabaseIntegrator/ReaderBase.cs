@@ -5,14 +5,14 @@ using Rocket.Libraries.Qurious;
 
 namespace Rocket.Libraries.DatabaseIntegrator
 {
-    public abstract class ReaderBase<TModel,TId> :  IReaderBase<TModel,TId>
-        where TModel : ModelBase<TId>
+    public abstract class ReaderBase<TModel,TIdentifier> :  IReaderBase<TModel,TIdentifier>
+        where TModel : ModelBase<TIdentifier>
     {
         
-        private readonly IDatabaseHelper<TId> databaseHelper;
+        private readonly IDatabaseHelper<TIdentifier> databaseHelper;
 
         public ReaderBase(
-            IDatabaseHelper<TId> databaseHelper)
+            IDatabaseHelper<TIdentifier> databaseHelper)
         {
             this.databaseHelper = databaseHelper;
         }
@@ -22,7 +22,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
             
         }
 
-        public async Task<TModel> GetByIdAsync(TId id, bool? showDeleted)
+        public async Task<TModel> GetByIdAsync(TIdentifier id, bool? showDeleted)
         {
             using (var qbuilder = new QBuilder())
             {
@@ -33,7 +33,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
                     .UseTableBoundFilter<TModel>()
                     .WhereEqualTo(model => model.Id, id)
                     .Then()
-                    .SetDeletedRecordsInclusionState<TModel,TId>(showDeleted);
+                    .SetDeletedRecordsInclusionState<TModel,TIdentifier>(showDeleted);
                 return await databaseHelper.GetSingleAsync<TModel>(qbuilder);
             }
         }
@@ -46,7 +46,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
                     .UseSelector()
                     .Select<TModel>("*")
                     .Then()
-                    .SetDeletedRecordsInclusionState<TModel,TId>(showDeleted);
+                    .SetDeletedRecordsInclusionState<TModel,TIdentifier>(showDeleted);
                 return await databaseHelper.GetManyAsync<TModel>(qbuilder);
             }
         }

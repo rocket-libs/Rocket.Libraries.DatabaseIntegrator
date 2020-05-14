@@ -18,8 +18,8 @@ namespace Rocket.Libraries.DatabaseIntegrator
             return qBuilder;
         }
 
-        public static QBuilder SetDeletedRecordsInclusionState<TTable,TId>(this QBuilder qBuilder, bool? showDeleted)
-            where TTable : ModelBase<TId>
+        public static QBuilder SetDeletedRecordsInclusionState<TTable,TIdentifier>(this QBuilder qBuilder, bool? showDeleted)
+            where TTable : ModelBase<TIdentifier>
         {
             if (showDeleted == null || showDeleted.Value == false)
             {

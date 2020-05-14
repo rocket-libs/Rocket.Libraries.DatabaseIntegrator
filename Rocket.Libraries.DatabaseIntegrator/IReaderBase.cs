@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 
 namespace Rocket.Libraries.DatabaseIntegrator
 {
-    public interface IReaderBase<TModel,TId> : IDisposable
-        where TModel : ModelBase<TId>
+    public interface IReaderBase<TModel,TIdentifier> : IDisposable
+        where TModel : ModelBase<TIdentifier>
     {
         Task<ImmutableList<TModel>> GetAsync(int? page, ushort? pageSize, bool? showDeleted);
-        Task<TModel> GetByIdAsync(TId id, bool? showDeleted);
+        Task<TModel> GetByIdAsync(TIdentifier id, bool? showDeleted);
     }
 }

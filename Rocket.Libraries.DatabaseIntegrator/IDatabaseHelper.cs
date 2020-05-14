@@ -5,7 +5,7 @@
     using System.Threading.Tasks;
     using Rocket.Libraries.Qurious;
 
-    public interface IDatabaseHelper<TId> : IDisposable
+    public interface IDatabaseHelper<TIdentifier> : IDisposable
     {
         void BeginTransaction();
 
@@ -14,16 +14,16 @@
         Task<int> ExecuteAsync(string sql, object param = null);
 
         Task<ImmutableList<TModel>> GetManyAsync<TModel>(QBuilder qbuilder)
-            where TModel : ModelBase<TId>;
+            where TModel : ModelBase<TIdentifier>;
 
         Task<TModel> GetSingleAsync<TModel>(string query);
 
         Task<TModel> GetSingleAsync<TModel>(QBuilder qbuilder)
-            where TModel : ModelBase<TId>;
+            where TModel : ModelBase<TIdentifier>;
 
         void RollBackTransaction();
 
         Task SaveAsync<TModel>(TModel model)
-            where TModel : ModelBase<TId>;
+            where TModel : ModelBase<TIdentifier>;
     }
 }

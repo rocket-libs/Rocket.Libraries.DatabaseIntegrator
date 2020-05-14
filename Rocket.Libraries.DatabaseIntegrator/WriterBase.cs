@@ -6,27 +6,27 @@ using Rocket.Libraries.Validation.Services;
 
 namespace Rocket.Libraries.DatabaseIntegrator
 {
-    public interface IWriterBase<TModel, TId>
-        where TModel : ModelBase<TId>
+    public interface IWriterBase<TModel, TIdentifier>
+        where TModel : ModelBase<TIdentifier>
         {
-            Task<ValidationResponse<TId>> DeleteAsync (TId id);
+            Task<ValidationResponse<TIdentifier>> DeleteAsync (TIdentifier id);
         }
 
-    public abstract class WriterBase<TModel, TId> : IWriterBase<TModel, TId>
-        where TModel : ModelBase<TId>
+    public abstract class WriterBase<TModel, TIdentifier> : IWriterBase<TModel, TIdentifier>
+        where TModel : ModelBase<TIdentifier>
         {
-            private readonly IDatabaseHelper<TId> databaseHelper;
-            private readonly IReaderBase<TModel, TId> entityReader;
+            private readonly IDatabaseHelper<TIdentifier> databaseHelper;
+            private readonly IReaderBase<TModel, TIdentifier> entityReader;
 
             public WriterBase (
-                IDatabaseHelper<TId> databaseHelper,
-                IReaderBase<TModel, TId> entityReader)
+                IDatabaseHelper<TIdentifier> databaseHelper,
+                IReaderBase<TModel, TIdentifier> entityReader)
             {
                 this.databaseHelper = databaseHelper;
                 this.entityReader = entityReader;
             }
 
-            public async Task<ValidationResponse<TId>> DeleteAsync (TId id)
+            public async Task<ValidationResponse<TIdentifier>> DeleteAsync (TIdentifier id)
             {
                 var record = await entityReader.GetByIdAsync (id, true);
                 var noData = record == null;
@@ -36,13 +36,13 @@ namespace Rocket.Libraries.DatabaseIntegrator
                 }
                 record.Deleted = true;
                 await databaseHelper.SaveAsync (record);
-                return new ValidationResponse<TId>
+                return new ValidationResponse<TIdentifier>
                 {
                     Entity = id,
                 };
             }
 
-            protected virtual async Task<ValidationResponse<TId>> WriteAsync (TModel model, bool isUpdate)
+            protected virtual async Task<ValidationResponse<TIdentifier>> WriteAsync (TModel model, bool isUpdate)
             {
                 
                 var validateResponse = await ValidateAsync (model);
@@ -62,7 +62,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
                 {
                     model = await GetUpdatedModel (model);
                     await databaseHelper.SaveAsync (model);
-                    return new ValidationResponse<TId>
+                    return new ValidationResponse<TIdentifier>
                     {
                         Entity = model.Id,
                         ValidationErrors = ImmutableList<ValidationError>.Empty,
@@ -79,15 +79,15 @@ namespace Rocket.Libraries.DatabaseIntegrator
                 else
                 {
                     var currentVersion = await entityReader.GetByIdAsync (model.Id, true);
-                    return ModelUpdater.Update<TModel,TId>(currentVersion, model, null);
+                    return ModelUpdater.Update<TModel,TIdentifier>(currentVersion, model, null);
                 }
             }
 
-            private async Task<ValidationResponse<TId>> ValidateAsync (TModel model)
+            private async Task<ValidationResponse<TIdentifier>> ValidateAsync (TModel model)
             {
-                using (var modelValidator = new ModelValidator<TModel,TId> ())
+                using (var modelValidator = new ModelValidator<TModel,TIdentifier> ())
                 {
-                    return new ValidationResponse<TId>
+                    return new ValidationResponse<TIdentifier>
                     {
                     ValidationErrors = await modelValidator.ValidateAsync (model),
                     };

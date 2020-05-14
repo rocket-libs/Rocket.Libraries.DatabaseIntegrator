@@ -10,12 +10,12 @@
 
     internal static class ModelUpdater
     {
-        public static TModel Update<TModel,TId>(TModel oldModel, TModel newModel, ImmutableList<string> notForUpdate)
-            where TModel : ModelBase<TId>
+        public static TModel Update<TModel,TIdentifier>(TModel oldModel, TModel newModel, ImmutableList<string> notForUpdate)
+            where TModel : ModelBase<TIdentifier>
         {
             notForUpdate = notForUpdate ?? ImmutableList<string>.Empty;
-            notForUpdate = notForUpdate.Add(nameof(ModelBase<TId>.Created))
-                .Add(nameof(ModelBase<TId>.Id));
+            notForUpdate = notForUpdate.Add(nameof(ModelBase<TIdentifier>.Created))
+                .Add(nameof(ModelBase<TIdentifier>.Id));
 
             using (var validator = new DataValidator())
             {
