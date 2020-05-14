@@ -20,7 +20,7 @@
         private readonly ILogger<DatabaseHelper<TId>> logger;
 
         private readonly ISessionProvider<long> sessionProvider;
-        private readonly IConnectionOpener connectionOpener;
+        private readonly IConnectionProvider connectionOpener;
         private readonly IEventHandlers<TId> eventHandlers;
         private readonly Action<string> fnLogSelects;
 
@@ -36,12 +36,12 @@
             IOptions<DatabaseConnectionSettings> DatabaseConnectionSettingsOptions,
             ILogger<DatabaseHelper<TId>> logger,
             ISessionProvider<long> sessionProvider,
-            IConnectionOpener connectionOpener,
+            IConnectionProvider connectionProvider,
             IEventHandlers<TId> eventHandlers)
         {
             this.logger = logger;
             this.sessionProvider = sessionProvider;
-            this.connectionOpener = connectionOpener;
+            this.connectionOpener = connectionProvider;
             this.eventHandlers = eventHandlers;
             this.databaseConnectionSettings = DatabaseConnectionSettingsOptions.Value;
             if (DatabaseConnectionSettings.IsDevelopment)
@@ -63,7 +63,7 @@
                 if (_connection == null && !_isDisposed)
                 {
                     DataValidator.ThrowIfRuleFailed (string.IsNullOrEmpty (databaseConnectionSettings.ConnectionString), $"Connection string not yet set.");
-                    _connection = connectionOpener.Open (databaseConnectionSettings.ConnectionString);
+                    _connection = connectionOpener.Get(databaseConnectionSettings.ConnectionString);
                     _connection.Open ();
                 }
 
