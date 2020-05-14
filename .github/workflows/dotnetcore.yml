@@ -26,3 +26,17 @@ jobs:
           cd Rocket.Libraries.DatabaseIntegrator
           dotnet pack -c Release -o out  
           dotnet nuget push ./out/*.nupkg -k ${{secrets.Nuget_Key}} -s https://api.nuget.org/v3/index.json
+      
+      - name: Send Success Notification
+        if: ${{ success() }}
+        uses: techulus/push-github-action@1.0.0
+        env:
+          API_KEY: ${{secrets.Techlus_Api_Key}}
+          MESSAGE: "Success: Rocket.Libraries.DatabaseIntegrator"
+          
+      - name: Send Failure Notification
+        if: ${{ failure() }}
+        uses: techulus/push-github-action@1.0.0
+        env:
+          API_KEY: ${{secrets.Techlus_Api_Key}}
+          MESSAGE: "Failure: Rocket.Libraries.DatabaseIntegrator"
