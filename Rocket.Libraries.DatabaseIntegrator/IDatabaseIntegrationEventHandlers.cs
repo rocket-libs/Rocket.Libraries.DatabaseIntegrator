@@ -1,7 +1,7 @@
 using System;
 using Rocket.Libraries.Qurious;
 
-namespace Rocket.Libraries.DatabaseIntegrator.Tests
+namespace Rocket.Libraries.DatabaseIntegrator
 {
     public interface IDatabaseIntegrationEventHandlers<TIdentifier>
     {
