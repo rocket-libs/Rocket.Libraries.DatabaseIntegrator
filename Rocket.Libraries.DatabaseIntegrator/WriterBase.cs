@@ -44,7 +44,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
 
             protected virtual async Task<ValidationResponse<TIdentifier>> WriteAsync (TModel model, bool isUpdate)
             {
-                
+
                 var validateResponse = await ValidateAsync (model);
                 using (var validator = new DataValidator ())
                 {
@@ -60,7 +60,10 @@ namespace Rocket.Libraries.DatabaseIntegrator
                 }
                 else
                 {
-                    model = await GetUpdatedModel (model);
+                    if (isUpdate)
+                    {
+                        model = await GetUpdatedModel (model);
+                    }
                     await databaseHelper.SaveAsync (model);
                     return new ValidationResponse<TIdentifier>
                     {
@@ -79,13 +82,13 @@ namespace Rocket.Libraries.DatabaseIntegrator
                 else
                 {
                     var currentVersion = await entityReader.GetByIdAsync (model.Id, true);
-                    return ModelUpdater.Update<TModel,TIdentifier>(currentVersion, model, null);
+                    return ModelUpdater.Update<TModel, TIdentifier> (currentVersion, model, null);
                 }
             }
 
             private async Task<ValidationResponse<TIdentifier>> ValidateAsync (TModel model)
             {
-                using (var modelValidator = new ModelValidator<TModel,TIdentifier> ())
+                using (var modelValidator = new ModelValidator<TModel, TIdentifier> ())
                 {
                     return new ValidationResponse<TIdentifier>
                     {
