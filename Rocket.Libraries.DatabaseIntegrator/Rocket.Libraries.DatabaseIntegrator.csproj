@@ -21,7 +21,7 @@
     <PackageReference Include="Rocket.Libraries.FormValidationHelper" Version="2.7.0" />
     <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="Dapper.Contrib" Version="2.0.35" />
-    <PackageReference Include="Rocket.Libraries.QBuilder" Version="6.0.0" />
+    <PackageReference Include="Rocket.Libraries.QBuilder" Version="6.1.0-beta02" />
     <PackageReference Include="Rocket.Libraries.Sessions" Version="1.1.2" />
     <PackageReference Include="Rocket.Libraries.Validation" Version="2.0.2" />
     <PackageReference Include="System.Collections.Immutable" Version="5.0.0-preview.3.20214.6" />

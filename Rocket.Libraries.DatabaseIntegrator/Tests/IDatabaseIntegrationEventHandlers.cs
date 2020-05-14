@@ -5,7 +5,7 @@ namespace Rocket.Libraries.DatabaseIntegrator.Tests
 {
     public interface IDatabaseIntegrationEventHandlers<TIdentifier>
     {
-        Action<QBuilder> BeforeSelect { get; }
+        Action<QBuilder,Type> BeforeSelect { get; }
 
         Action<ModelBase<TIdentifier>> BeforeCreate { get; }
 

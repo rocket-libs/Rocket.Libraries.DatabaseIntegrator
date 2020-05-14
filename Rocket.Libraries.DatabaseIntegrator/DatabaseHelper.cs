@@ -81,7 +81,7 @@
         public async Task<ImmutableList<TModel>> GetManyAsync<TModel> (QBuilder qbuilder)
         where TModel : ModelBase<TIdentifier>
         {
-            ApplyOnBeforeSelectActions (qbuilder);
+            ApplyOnBeforeSelectActions<TModel>(qbuilder);
             var query = qbuilder.Build ();
             return await GetManyAsync<TModel> (query);
         }
@@ -99,7 +99,7 @@
         where TModel : ModelBase<TIdentifier>
 
             {
-                ApplyOnBeforeSelectActions (qbuilder);
+                ApplyOnBeforeSelectActions<TModel>(qbuilder);
                 var query = qbuilder.Build ();
                 return await GetSingleAsync<TModel> (query);
             }
@@ -164,11 +164,12 @@
             return result.ToImmutableList ();
         }
 
-        private void ApplyOnBeforeSelectActions (QBuilder qBuilder)
+        private void ApplyOnBeforeSelectActions<TModel>(QBuilder qBuilder)
+            where TModel : ModelBase<TIdentifier>
         {
             if (eventHandlers.BeforeSelect != null)
             {
-                eventHandlers.BeforeSelect (qBuilder);
+                eventHandlers.BeforeSelect (qBuilder,typeof(TModel));
             }
         }
 
