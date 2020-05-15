@@ -12,9 +12,9 @@ namespace Rocket.Libraries.DatabaseIntegrator
         {
 
             services
+            .AddScoped<IDatabaseHelper<TIdentifier>, DatabaseHelper<TIdentifier>> ()
             .AddTransient<IConnectionProvider, TConnectionProvider> ()
             .AddTransient<IDatabaseIntegrationEventHandlers<TIdentifier>, TDatabaseIntegrationEventHandlers> ()
-            .AddScoped<IDatabaseHelper<TIdentifier>, DatabaseHelper<TIdentifier>> ()
             .AddTransient<ISessionProvider<TIdentifier>, SessionProvider<TIdentifier>> ()
             .AddTransient<IRequestHeaderReader, RequestHeaderReader> ();
             DapperConfigurations.InitializeDapper ();
