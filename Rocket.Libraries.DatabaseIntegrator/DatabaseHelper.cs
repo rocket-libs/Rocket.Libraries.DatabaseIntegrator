@@ -109,19 +109,11 @@
         {
             if (model.IsNew)
             {
-                if (eventHandlers.BeforeCreate != null)
-                {
-                    eventHandlers.BeforeCreate (model);
-                }
                 model.Created = DateTime.Now;
                 await Connection.InsertAsync (model, transaction : _transaction);
             }
             else
             {
-                if (eventHandlers.BeforeUpdate != null)
-                {
-                    eventHandlers.BeforeUpdate (model);
-                }
                 await Connection.UpdateAsync (model, transaction : _transaction);
             }
         }

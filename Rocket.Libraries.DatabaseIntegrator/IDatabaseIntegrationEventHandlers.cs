@@ -10,5 +10,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
         Action<ModelBase<TIdentifier>> BeforeCreate { get; }
 
         Action<ModelBase<TIdentifier>> BeforeUpdate { get; }
+
+        Action<ModelBase<TIdentifier>> BeforeDelete { get; }
     }
 }
