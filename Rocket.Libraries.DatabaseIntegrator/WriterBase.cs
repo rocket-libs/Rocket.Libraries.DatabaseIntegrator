@@ -10,6 +10,10 @@ namespace Rocket.Libraries.DatabaseIntegrator
         where TModel : ModelBase<TIdentifier>
         {
             Task<ValidationResponse<TIdentifier>> DeleteAsync (TIdentifier id);
+
+            Task<ValidationResponse<TIdentifier>> InsertAsync (TModel model);
+
+            Task<ValidationResponse<TIdentifier>> UpdateAsync (TModel model);
         }
 
     public abstract class WriterBase<TModel, TIdentifier> : IWriterBase<TModel, TIdentifier>
@@ -42,7 +46,17 @@ namespace Rocket.Libraries.DatabaseIntegrator
                 };
             }
 
-            protected virtual async Task<ValidationResponse<TIdentifier>> WriteAsync (TModel model, bool isUpdate)
+            public async Task<ValidationResponse<TIdentifier>> InsertAsync (TModel model)
+            {
+                return await WriteAsync (model, false);
+            }
+
+            public async Task<ValidationResponse<TIdentifier>> UpdateAsync (TModel model)
+            {
+                return await WriteAsync (model, true);
+            }
+
+            private async Task<ValidationResponse<TIdentifier>> WriteAsync (TModel model, bool isUpdate)
             {
 
                 var validateResponse = await ValidateAsync (model);
