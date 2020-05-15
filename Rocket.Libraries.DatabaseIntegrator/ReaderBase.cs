@@ -46,6 +46,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
                     .UseSelector()
                     .Select<TModel>("*")
                     .Then()
+                    .ApplyPaging<TModel, TIdentifier>(model => model.Id, page, pageSize)
                     .SetDeletedRecordsInclusionState<TModel,TIdentifier>(showDeleted);
                 return await databaseHelper.GetManyAsync<TModel>(qbuilder);
             }
