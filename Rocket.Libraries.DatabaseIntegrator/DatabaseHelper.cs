@@ -12,14 +12,13 @@
     using Microsoft.Extensions.Options;
     using Rocket.Libraries.DatabaseIntegrator.Tests;
     using Rocket.Libraries.Qurious;
-    using Rocket.Libraries.Sessions.SessionProvision;
     using Rocket.Libraries.Validation.Services;
 
     public class DatabaseHelper<TIdentifier> : IDatabaseHelper<TIdentifier>
     {
         private readonly ILogger<DatabaseHelper<TIdentifier>> logger;
 
-        private readonly ISessionProvider<long> sessionProvider;
+        
         private readonly IConnectionProvider connectionOpener;
         private readonly IDatabaseIntegrationEventHandlers<TIdentifier> eventHandlers;
         private readonly Action<string> fnLogSelects;
@@ -35,12 +34,10 @@
         public DatabaseHelper (
             IOptions<DatabaseConnectionSettings> DatabaseConnectionSettingsOptions,
             ILogger<DatabaseHelper<TIdentifier>> logger,
-            ISessionProvider<long> sessionProvider,
             IConnectionProvider connectionProvider,
             IDatabaseIntegrationEventHandlers<TIdentifier> eventHandlers)
         {
             this.logger = logger;
-            this.sessionProvider = sessionProvider;
             this.connectionOpener = connectionProvider;
             this.eventHandlers = eventHandlers;
             this.databaseConnectionSettings = DatabaseConnectionSettingsOptions.Value;

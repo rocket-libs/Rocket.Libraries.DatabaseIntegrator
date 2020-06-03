@@ -1,7 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Rocket.Libraries.Sessions.RequestHeaders;
-using Rocket.Libraries.Sessions.SessionProvision;
-
 namespace Rocket.Libraries.DatabaseIntegrator
 {
     public static class Initialization
@@ -14,9 +11,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
             services
             .AddScoped<IDatabaseHelper<TIdentifier>, DatabaseHelper<TIdentifier>> ()
             .AddTransient<IConnectionProvider, TConnectionProvider> ()
-            .AddTransient<IDatabaseIntegrationEventHandlers<TIdentifier>, TDatabaseIntegrationEventHandlers> ()
-            .AddTransient<ISessionProvider<TIdentifier>, SessionProvider<TIdentifier>> ()
-            .AddTransient<IRequestHeaderReader, RequestHeaderReader> ();
+            .AddTransient<IDatabaseIntegrationEventHandlers<TIdentifier>, TDatabaseIntegrationEventHandlers> ();
             DapperConfigurations.InitializeDapper ();
             return services;
         }
