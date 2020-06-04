@@ -1,6 +1,5 @@
 ﻿namespace Rocket.Libraries.DatabaseIntegrator
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Data;
     using System.Linq;
