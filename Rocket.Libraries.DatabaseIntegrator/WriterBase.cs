@@ -2,98 +2,94 @@ using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Rocket.Libraries.FormValidationHelper;
-using Rocket.Libraries.Validation.Services;
 
 namespace Rocket.Libraries.DatabaseIntegrator
 {
     public interface IWriterBase<TModel, TIdentifier>
         where TModel : ModelBase<TIdentifier>
-        {
-            Task<ValidationResponse<TIdentifier>> DeleteAsync (TIdentifier id);
+    {
+        Task<ValidationResponse<TIdentifier>> DeleteAsync(TIdentifier id);
 
-            Task<ValidationResponse<TIdentifier>> InsertAsync (TModel model);
+        Task<ValidationResponse<TIdentifier>> InsertAsync(TModel model);
 
-            Task<ValidationResponse<TIdentifier>> UpdateAsync (TModel model);
-        }
+        Task<ValidationResponse<TIdentifier>> UpdateAsync(TModel model);
+    }
 
     public abstract class WriterBase<TModel, TIdentifier> : IWriterBase<TModel, TIdentifier>
         where TModel : ModelBase<TIdentifier>
-        {
-            private readonly IDatabaseHelper<TIdentifier> databaseHelper;
-            private readonly IReaderBase<TModel, TIdentifier> entityReader;
+    {
+        private readonly IDatabaseHelper<TIdentifier> databaseHelper;
+        private readonly IReaderBase<TModel, TIdentifier> entityReader;
         private readonly IDatabaseIntegrationEventHandlers<TIdentifier> databaseIntegrationEventHandlers;
 
-        public WriterBase (
+        public WriterBase(
                 IDatabaseHelper<TIdentifier> databaseHelper,
                 IReaderBase<TModel, TIdentifier> entityReader,
                 IDatabaseIntegrationEventHandlers<TIdentifier> databaseIntegrationEventHandlers)
+        {
+            this.databaseHelper = databaseHelper;
+            this.entityReader = entityReader;
+            this.databaseIntegrationEventHandlers = databaseIntegrationEventHandlers;
+        }
+
+        public async Task<ValidationResponse<TIdentifier>> DeleteAsync(TIdentifier id)
+        {
+            var record = await entityReader.GetByIdAsync(id, true);
+            var noData = record == null;
+            if (noData)
             {
-                this.databaseHelper = databaseHelper;
-                this.entityReader = entityReader;
-                this.databaseIntegrationEventHandlers = databaseIntegrationEventHandlers;
+                throw new Exception($"Could not find record with id '{id}'");
             }
-
-            public async Task<ValidationResponse<TIdentifier>> DeleteAsync (TIdentifier id)
+            databaseIntegrationEventHandlers.BeforeDelete(record);
+            record.Deleted = true;
+            await databaseHelper.SaveAsync(record);
+            return new ValidationResponse<TIdentifier>
             {
-                var record = await entityReader.GetByIdAsync (id, true);
-                var noData = record == null;
-                if (noData)
-                {
-                    throw new Exception ($"Could not find record with id '{id}'");
-                }
-                databaseIntegrationEventHandlers.BeforeDelete(record);
-                record.Deleted = true;
-                await databaseHelper.SaveAsync (record);
-                return new ValidationResponse<TIdentifier>
-                {
-                    Entity = id,
-                };
-            }
+                Entity = id,
+            };
+        }
 
-            public async Task<ValidationResponse<TIdentifier>> InsertAsync (TModel model)
+        public async Task<ValidationResponse<TIdentifier>> InsertAsync(TModel model)
+        {
+            databaseIntegrationEventHandlers.BeforeCreate(model);
+            return await WriteAsync(model, false);
+        }
+
+        public async Task<ValidationResponse<TIdentifier>> UpdateAsync(TModel model)
+        {
+            databaseIntegrationEventHandlers.BeforeUpdate(model);
+            return await WriteAsync(model, true);
+        }
+
+        private async Task<ValidationResponse<TIdentifier>> WriteAsync(TModel model, bool isUpdate)
+        {
+
+            var validateResponse = await ValidateAsync(model);
+            if (model == null)
             {
-                databaseIntegrationEventHandlers.BeforeCreate(model);
-                return await WriteAsync (model, false);
+                throw new DatabaseIntegratorException("No data was supplied for saving.");
             }
-
-            public async Task<ValidationResponse<TIdentifier>> UpdateAsync (TModel model)
+            else if (model.IsNew && isUpdate)
             {
-                databaseIntegrationEventHandlers.BeforeUpdate(model);
-                return await WriteAsync (model, true);
+                throw new DatabaseIntegratorException("No Id was specified for the record to be updated.");
             }
-
-            private async Task<ValidationResponse<TIdentifier>> WriteAsync (TModel model, bool isUpdate)
+            else if (isUpdate == false && model.IsNew == false)
             {
-
-                var validateResponse = await ValidateAsync (model);
-                using (var validator = new DataValidator ())
-                {
-                    validator
-                        .AddFailureCondition (model == null, "No data was supplied for saving.", true)
-                        .AddFailureCondition (model.IsNew && isUpdate, "No Id was specified for the record to be updated.", false)
-                        .AddFailureCondition (isUpdate == false && model.IsNew == false, "An Id was specified during a create operation. New records should not be submitted with Ids", false)
-                        .ThrowExceptionOnInvalidRules ();
-                }
-                if (validateResponse.HasErrors)
-                {
-                    return validateResponse;
-                }
-                else
-                {
-                    if (isUpdate)
-                    {
-                        model = await GetUpdatedModel (model);
-                    }
-                    await databaseHelper.SaveAsync (model);
-                    return new ValidationResponse<TIdentifier>
-                    {
-                        Entity = model.Id,
-                        ValidationErrors = ImmutableList<ValidationError>.Empty,
-                    };
-                }
+                throw new DatabaseIntegratorException("An Id was specified during a create operation. New records should not be submitted with Ids");
             }
+            if (isUpdate)
+            {
+                model = await GetUpdatedModel(model);
+            }
+            await databaseHelper.SaveAsync(model);
+            return new ValidationResponse<TIdentifier>
+            {
+                Entity = model.Id,
+                ValidationErrors = ImmutableList<ValidationError>.Empty,
+            };
+        }
 
-            private async Task<TModel> GetUpdatedModel (TModel model)
+private async Task<TModel> GetUpdatedModel (TModel model)
             {
                 if (model.IsNew)
                 {

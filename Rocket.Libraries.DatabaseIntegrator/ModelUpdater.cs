@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Immutable;
     using System.Linq;
-    using Rocket.Libraries.Validation.Services;
 
     internal static class ModelUpdater
     {
@@ -14,12 +13,13 @@
             notForUpdate = notForUpdate.Add(nameof(ModelBase<TIdentifier>.Created))
                 .Add(nameof(ModelBase<TIdentifier>.Id));
 
-            using (var validator = new DataValidator())
+            if(oldModel == null)
             {
-                validator
-                    .AddFailureCondition(oldModel == null, "Old data to be updated was not supplied", true)
-                    .AddFailureCondition(newModel == null, "New data to use for updating was not supplied", true)
-                    .ThrowExceptionOnInvalidRules();
+                throw new DatabaseIntegratorException("Old data to be updated was not supplied");
+            }
+            else if(newModel == null)
+            {
+                throw new DatabaseIntegratorException("New data to use for updating was not supplied");
             }
 
             var manyPropertiesToUpdate = typeof(TModel)

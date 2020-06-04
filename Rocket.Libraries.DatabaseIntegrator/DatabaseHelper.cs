@@ -10,7 +10,6 @@
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using Rocket.Libraries.DatabaseIntegrator.Tests;
-    using Rocket.Libraries.Validation.Services;
 
     public class DatabaseHelper<TIdentifier> : IDatabaseHelper<TIdentifier>
     {
@@ -57,7 +56,11 @@
             {
                 if (_connection == null && !_isDisposed)
                 {
-                    DataValidator.ThrowIfRuleFailed (string.IsNullOrEmpty (databaseConnectionSettings.ConnectionString), $"Connection string not yet set.");
+                    var noConnectionString = string.IsNullOrEmpty(databaseConnectionSettings.ConnectionString);
+                    if (noConnectionString)
+                    {
+                        throw new DatabaseIntegratorException($"Connection string not yet set.");
+                    }
                     _connection = connectionOpener.Get(databaseConnectionSettings.ConnectionString);
                     _connection.Open ();
                 }
@@ -87,7 +90,11 @@
             where TModel : ModelBase<TIdentifier>
         {
             var result = await GetManyAsync<TModel> (query);
-            DataValidator.ThrowIfRuleFailed (result.Count > 1, $"Expected only one result for query. Instead got '{result.Count}'{Environment.NewLine}Query Was: {Environment.NewLine}{Environment.NewLine}{query}");
+            var tooManyResults = result.Count > 1;
+            if (tooManyResults)
+            {
+                throw new DatabaseIntegratorException($"Expected only one result for query. Instead got '{result.Count}'{Environment.NewLine}Query Was: {Environment.NewLine}{Environment.NewLine}{query}");
+            }
             return result.FirstOrDefault ();
         }
 
@@ -121,7 +128,10 @@
         {
             if (!_isDisposed)
             {
-                DataValidator.ThrowIfRuleFailed (InTransaction, "A database transaction is already in progress. Cannot nest transactions");
+                if (InTransaction)
+                {
+                    throw new DatabaseIntegratorException("A database transaction is already in progress. Cannot nest transactions");
+                }
                 _transaction = Connection.BeginTransaction ();
             }
         }
