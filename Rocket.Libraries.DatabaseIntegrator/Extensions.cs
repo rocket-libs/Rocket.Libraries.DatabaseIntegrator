@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using System.Linq.Expressions;
-using Rocket.Libraries.Qurious;
+using Rocket.Libraries.PropertyNameResolver;
 
 namespace Rocket.Libraries.DatabaseIntegrator
 {
@@ -9,26 +9,27 @@ namespace Rocket.Libraries.DatabaseIntegrator
     {
         private const ushort LongestPage = ushort.MaxValue;
 
-        public static QBuilder ApplyPaging<TTable, TField>(this QBuilder qBuilder, Expression<Func<TTable, TField>> fieldDescriber, int? page, ushort? pageSize)
+        public static IQueryBuilder<TIdentifier> ApplyPaging<TModel, TIdentifier>(this IQueryBuilder<TIdentifier> queryBuilder, TypedPropertyNamedResolver<TModel> field, int? page, ushort? pageSize)
         {
             var safePage = GetSafePage(page);
             var safePageSize = GetSafePageSize(pageSize);
-            qBuilder.UseSqlServerPagingBuilder<TTable>()
-                    .PageBy(fieldDescriber, safePage, safePageSize);
-            return qBuilder;
+            queryBuilder.ApplyPaging<TModel>(field, safePage, safePageSize);
+            return queryBuilder;
         }
 
-        public static QBuilder SetDeletedRecordsInclusionState<TTable,TIdentifier>(this QBuilder qBuilder, bool? showDeleted)
-            where TTable : ModelBase<TIdentifier>
+        public static IQueryBuilder<TIdentifier> SetDeletedRecordsInclusionState<TModel,TIdentifier>(this IQueryBuilder<TIdentifier> queryBuilder, bool? showDeleted)
+            where TModel : ModelBase<TIdentifier>
         {
             if (showDeleted == null || showDeleted.Value == false)
             {
-                qBuilder
-                    .UseTableBoundFilter<TTable>()
-                    .WhereEqualTo(table => table.Deleted, false);
+                queryBuilder.ManageDeletedRecordsVisibility<TModel>(false);
+            }
+            else
+            {
+                queryBuilder.ManageDeletedRecordsVisibility<TModel>(true);
             }
 
-            return qBuilder;
+            return queryBuilder;
         }
 
         private static uint GetSafePage(int? page)

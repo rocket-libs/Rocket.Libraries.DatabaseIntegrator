@@ -1,11 +1,10 @@
 using System;
-using Rocket.Libraries.Qurious;
 
 namespace Rocket.Libraries.DatabaseIntegrator
 {
     public interface IDatabaseIntegrationEventHandlers<TIdentifier>
     {
-        Action<QBuilder,Type> BeforeSelect { get; }
+        Action<IQueryBuilder<TIdentifier>,Type> BeforeSelect { get; }
 
         Action<ModelBase<TIdentifier>> BeforeCreate { get; }
 

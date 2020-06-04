@@ -11,7 +11,6 @@
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using Rocket.Libraries.DatabaseIntegrator.Tests;
-    using Rocket.Libraries.Qurious;
     using Rocket.Libraries.Validation.Services;
 
     public class DatabaseHelper<TIdentifier> : IDatabaseHelper<TIdentifier>
@@ -75,16 +74,18 @@
         }
 
         [ExcludeFromCoverage]
-        public async Task<ImmutableList<TModel>> GetManyAsync<TModel> (QBuilder qbuilder)
+        public async Task<ImmutableList<TModel>> GetManyAsync<TModel> (
+            IQueryBuilder<TIdentifier> queryProvider)
         where TModel : ModelBase<TIdentifier>
         {
-            ApplyOnBeforeSelectActions<TModel>(qbuilder);
-            var query = qbuilder.Build ();
+            ApplyOnBeforeSelectActions<TModel>(queryProvider);
+            var query = queryProvider.Build ();
             return await GetManyAsync<TModel> (query);
         }
 
         [ExcludeFromCoverage]
-        public async Task<TModel> GetSingleAsync<TModel> (string query)
+        private async Task<TModel> GetSingleAsync<TModel> (string query)
+            where TModel : ModelBase<TIdentifier>
         {
             var result = await GetManyAsync<TModel> (query);
             DataValidator.ThrowIfRuleFailed (result.Count > 1, $"Expected only one result for query. Instead got '{result.Count}'{Environment.NewLine}Query Was: {Environment.NewLine}{Environment.NewLine}{query}");
@@ -92,12 +93,13 @@
         }
 
         [ExcludeFromCoverage]
-        public async Task<TModel> GetSingleAsync<TModel> (QBuilder qbuilder)
+        public async Task<TModel> GetSingleAsync<TModel> (
+            IQueryBuilder<TIdentifier> queryProvider)
         where TModel : ModelBase<TIdentifier>
 
             {
-                ApplyOnBeforeSelectActions<TModel>(qbuilder);
-                var query = qbuilder.Build ();
+                ApplyOnBeforeSelectActions<TModel>(queryProvider);
+                var query = queryProvider.Build ();
                 return await GetSingleAsync<TModel> (query);
             }
 
@@ -153,12 +155,13 @@
             return result.ToImmutableList ();
         }
 
-        private void ApplyOnBeforeSelectActions<TModel>(QBuilder qBuilder)
+        private void ApplyOnBeforeSelectActions<TModel>(
+            IQueryBuilder<TIdentifier> queryProvider)
             where TModel : ModelBase<TIdentifier>
         {
             if (eventHandlers.BeforeSelect != null)
             {
-                eventHandlers.BeforeSelect (qBuilder,typeof(TModel));
+                eventHandlers.BeforeSelect (queryProvider,typeof(TModel));
             }
         }
 

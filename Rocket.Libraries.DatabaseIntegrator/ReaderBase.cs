@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
-using Rocket.Libraries.Qurious;
 
 namespace Rocket.Libraries.DatabaseIntegrator
 {
@@ -10,11 +9,14 @@ namespace Rocket.Libraries.DatabaseIntegrator
     {
         
         private readonly IDatabaseHelper<TIdentifier> databaseHelper;
+        private readonly IQueryBuilder<TIdentifier> queryBuilder;
 
         public ReaderBase(
-            IDatabaseHelper<TIdentifier> databaseHelper)
+            IDatabaseHelper<TIdentifier> databaseHelper,
+            IQueryBuilder<TIdentifier> queryBuilder)
         {
             this.databaseHelper = databaseHelper;
+            this.queryBuilder = queryBuilder;
         }
 
         public void Dispose()
@@ -24,32 +26,14 @@ namespace Rocket.Libraries.DatabaseIntegrator
 
         public async Task<TModel> GetByIdAsync(TIdentifier id, bool? showDeleted)
         {
-            using (var qbuilder = new QBuilder())
-            {
-                qbuilder
-                    .UseSelector()
-                    .Select<TModel>("*")
-                    .Then()
-                    .UseTableBoundFilter<TModel>()
-                    .WhereEqualTo(model => model.Id, id)
-                    .Then()
-                    .SetDeletedRecordsInclusionState<TModel,TIdentifier>(showDeleted);
-                return await databaseHelper.GetSingleAsync<TModel>(qbuilder);
-            }
+            queryBuilder.PrepareSelectByIdQuery<TModel>(id, showDeleted);
+            return await databaseHelper.GetSingleAsync<TModel>(queryBuilder);
         }
 
         public virtual async Task<ImmutableList<TModel>> GetAsync(int? page, ushort? pageSize, bool? showDeleted)
         {
-            using (var qbuilder = new QBuilder())
-            {
-                qbuilder
-                    .UseSelector()
-                    .Select<TModel>("*")
-                    .Then()
-                    .ApplyPaging<TModel, TIdentifier>(model => model.Id, page, pageSize)
-                    .SetDeletedRecordsInclusionState<TModel,TIdentifier>(showDeleted);
-                return await databaseHelper.GetManyAsync<TModel>(qbuilder);
-            }
+            queryBuilder.PrepareSelectAll<TModel>(page, pageSize, showDeleted);
+            return await databaseHelper.GetManyAsync<TModel>(queryBuilder);
         }
     }
     
