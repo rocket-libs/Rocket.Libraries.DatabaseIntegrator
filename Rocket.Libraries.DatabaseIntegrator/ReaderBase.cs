@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Immutable;
 using System.Threading.Tasks;
 
@@ -9,14 +8,14 @@ namespace Rocket.Libraries.DatabaseIntegrator
         {
 
             private readonly IDatabaseHelper<TIdentifier> databaseHelper;
-            private readonly ISelectHelper<TModel, TIdentifier> queryBuilder;
+            private readonly ISelectHelper<TIdentifier> selectHelper;
 
             public ReaderBase (
                 IDatabaseHelper<TIdentifier> databaseHelper,
-                ISelectHelper<TModel, TIdentifier> queryBuilder)
+                ISelectHelper<TIdentifier> selectHelper)
             {
                 this.databaseHelper = databaseHelper;
-                this.queryBuilder = queryBuilder;
+                this.selectHelper = selectHelper;
             }
 
             public void Dispose ()
@@ -26,12 +25,14 @@ namespace Rocket.Libraries.DatabaseIntegrator
 
             public async Task<TModel> GetByIdAsync (TIdentifier id, bool? showDeleted)
             {
-                return await queryBuilder.GetSingleByIdAsync (id, showDeleted);
+                var query = selectHelper.GetSingleByIdAsync (id, showDeleted);
+                return await databaseHelper.GetSingleAsync<TModel> (query);
             }
 
             public virtual async Task<ImmutableList<TModel>> GetAsync (int? page, ushort? pageSize, bool? showDeleted)
             {
-                return await queryBuilder.GetPagedAsync (page, pageSize, showDeleted);
+                var query = selectHelper.GetPagedAsync (page, pageSize, showDeleted);
+                return await databaseHelper.GetManyAsync<TModel>(query);
             }
         }
 

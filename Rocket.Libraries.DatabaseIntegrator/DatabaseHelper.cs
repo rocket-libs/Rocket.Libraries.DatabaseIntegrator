@@ -76,17 +76,7 @@
         }
 
         [ExcludeFromCoverage]
-        public async Task<ImmutableList<TModel>> GetManyAsync<TModel> (
-            ISelectHelper<TModel,TIdentifier> queryProvider)
-        where TModel : ModelBase<TIdentifier>
-        {
-            ApplyOnBeforeSelectActions<TModel>(queryProvider);
-            var query = queryProvider.Build ();
-            return await GetManyAsync<TModel> (query);
-        }
-
-        [ExcludeFromCoverage]
-        private async Task<TModel> GetSingleAsync<TModel> (string query)
+        public async Task<TModel> GetSingleAsync<TModel> (string query)
             where TModel : ModelBase<TIdentifier>
         {
             var result = await GetManyAsync<TModel> (query);
@@ -98,16 +88,7 @@
             return result.FirstOrDefault ();
         }
 
-        [ExcludeFromCoverage]
-        public async Task<TModel> GetSingleAsync<TModel> (
-            ISelectHelper<TModel, TIdentifier> queryProvider)
-        where TModel : ModelBase<TIdentifier>
-
-            {
-                ApplyOnBeforeSelectActions<TModel>(queryProvider);
-                var query = queryProvider.Build ();
-                return await GetSingleAsync<TModel> (query);
-            }
+        
 
         public async Task SaveAsync<TModel> (TModel model)
         where TModel : ModelBase<TIdentifier>
@@ -157,21 +138,11 @@
         }
 
         [ExcludeFromCoverage]
-        private async Task<ImmutableList<TModel>> GetManyAsync<TModel> (string query)
+        public async Task<ImmutableList<TModel>> GetManyAsync<TModel> (string query)
         {
             fnLogSelects (query);
             var result = await Connection.QueryAsync<TModel> (query, transaction : _transaction);
             return result.ToImmutableList ();
-        }
-
-        private void ApplyOnBeforeSelectActions<TModel>(
-            ISelectHelper<TModel, TIdentifier> queryProvider)
-            where TModel : ModelBase<TIdentifier>
-        {
-            if (eventHandlers.BeforeSelect != null)
-            {
-                eventHandlers.BeforeSelect ((ISelectHelper<ModelBase<TIdentifier>,TIdentifier>)queryProvider,typeof(TModel));
-            }
         }
 
         private void ExitTransaction ()

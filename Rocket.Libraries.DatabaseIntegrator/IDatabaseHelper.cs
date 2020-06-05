@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Immutable;
     using System.Threading.Tasks;
+    using Rocket.Libraries.DatabaseIntegrator.Tests;
 
     public interface IDatabaseHelper<TIdentifier> : IDisposable
     {
@@ -11,13 +12,10 @@
         void CommitTransaction();
 
         Task<int> ExecuteAsync(string sql, object param = null);
-
-        Task<ImmutableList<TModel>> GetManyAsync<TModel>(
-            ISelectHelper<TModel, TIdentifier> queryProvider)
-            where TModel : ModelBase<TIdentifier>;
-
+        [ExcludeFromCoverage]
+        Task<ImmutableList<TModel>> GetManyAsync<TModel>(string query);
         Task<TModel> GetSingleAsync<TModel>(
-            ISelectHelper<TModel, TIdentifier> queryProvider)
+            string query)
             where TModel : ModelBase<TIdentifier>;
 
         void RollBackTransaction();
