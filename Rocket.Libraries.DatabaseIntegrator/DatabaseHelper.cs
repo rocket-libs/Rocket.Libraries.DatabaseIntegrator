@@ -77,7 +77,7 @@
 
         [ExcludeFromCoverage]
         public async Task<ImmutableList<TModel>> GetManyAsync<TModel> (
-            IQueryBuilder<TIdentifier> queryProvider)
+            ISelectHelper<TModel,TIdentifier> queryProvider)
         where TModel : ModelBase<TIdentifier>
         {
             ApplyOnBeforeSelectActions<TModel>(queryProvider);
@@ -100,7 +100,7 @@
 
         [ExcludeFromCoverage]
         public async Task<TModel> GetSingleAsync<TModel> (
-            IQueryBuilder<TIdentifier> queryProvider)
+            ISelectHelper<TModel, TIdentifier> queryProvider)
         where TModel : ModelBase<TIdentifier>
 
             {
@@ -165,12 +165,12 @@
         }
 
         private void ApplyOnBeforeSelectActions<TModel>(
-            IQueryBuilder<TIdentifier> queryProvider)
+            ISelectHelper<TModel, TIdentifier> queryProvider)
             where TModel : ModelBase<TIdentifier>
         {
             if (eventHandlers.BeforeSelect != null)
             {
-                eventHandlers.BeforeSelect (queryProvider,typeof(TModel));
+                eventHandlers.BeforeSelect ((ISelectHelper<ModelBase<TIdentifier>,TIdentifier>)queryProvider,typeof(TModel));
             }
         }
 

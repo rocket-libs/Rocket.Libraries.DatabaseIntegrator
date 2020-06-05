@@ -4,7 +4,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
 {
     public interface IDatabaseIntegrationEventHandlers<TIdentifier>
     {
-        Action<IQueryBuilder<TIdentifier>,Type> BeforeSelect { get; }
+        Action<ISelectHelper<ModelBase<TIdentifier>, TIdentifier>,Type> BeforeSelect { get; }
 
         Action<ModelBase<TIdentifier>> BeforeCreate { get; }
 

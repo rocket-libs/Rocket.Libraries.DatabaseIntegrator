@@ -13,11 +13,11 @@
         Task<int> ExecuteAsync(string sql, object param = null);
 
         Task<ImmutableList<TModel>> GetManyAsync<TModel>(
-            IQueryBuilder<TIdentifier> queryProvider)
+            ISelectHelper<TModel, TIdentifier> queryProvider)
             where TModel : ModelBase<TIdentifier>;
 
         Task<TModel> GetSingleAsync<TModel>(
-            IQueryBuilder<TIdentifier> queryProvider)
+            ISelectHelper<TModel, TIdentifier> queryProvider)
             where TModel : ModelBase<TIdentifier>;
 
         void RollBackTransaction();

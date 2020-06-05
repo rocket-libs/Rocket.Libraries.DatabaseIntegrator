@@ -9,11 +9,11 @@ namespace Rocket.Libraries.DatabaseIntegrator
     {
         
         private readonly IDatabaseHelper<TIdentifier> databaseHelper;
-        private readonly IQueryBuilder<TIdentifier> queryBuilder;
+        private readonly ISelectHelper<TModel, TIdentifier> queryBuilder;
 
         public ReaderBase(
             IDatabaseHelper<TIdentifier> databaseHelper,
-            IQueryBuilder<TIdentifier> queryBuilder)
+            ISelectHelper<TModel, TIdentifier> queryBuilder)
         {
             this.databaseHelper = databaseHelper;
             this.queryBuilder = queryBuilder;
