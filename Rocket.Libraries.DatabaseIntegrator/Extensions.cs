@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using System.Linq.Expressions;
 using Rocket.Libraries.PropertyNameResolver;
 
 namespace Rocket.Libraries.DatabaseIntegrator
@@ -13,21 +12,21 @@ namespace Rocket.Libraries.DatabaseIntegrator
         {
             var safePage = GetSafePage(page);
             var safePageSize = GetSafePageSize(pageSize);
-            queryBuilder.ApplyPaging<TModel>(field, safePage, safePageSize);
+            //queryBuilder.ApplyPaging<TModel>(field, safePage, safePageSize);
             return queryBuilder;
         }
 
         public static IQueryBuilder<TIdentifier> SetDeletedRecordsInclusionState<TModel,TIdentifier>(this IQueryBuilder<TIdentifier> queryBuilder, bool? showDeleted)
             where TModel : ModelBase<TIdentifier>
         {
-            if (showDeleted == null || showDeleted.Value == false)
-            {
-                queryBuilder.ManageDeletedRecordsVisibility<TModel>(false);
-            }
-            else
-            {
-                queryBuilder.ManageDeletedRecordsVisibility<TModel>(true);
-            }
+            // if (showDeleted == null || showDeleted.Value == false)
+            // {
+            //     queryBuilder.ManageDeletedRecordsVisibility<TModel>(false);
+            // }
+            // else
+            // {
+            //     queryBuilder.ManageDeletedRecordsVisibility<TModel>(true);
+            // }
 
             return queryBuilder;
         }
