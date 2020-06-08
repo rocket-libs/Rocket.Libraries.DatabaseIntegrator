@@ -11,9 +11,6 @@ namespace Rocket.Libraries.DatabaseIntegrator
     public abstract class ReaderBase<TModel, TIdentifier> : IReaderBase<TModel, TIdentifier> where TModel : ModelBase<TIdentifier>
     {
 
-        
-
-
         public ReaderBase(
             IDatabaseHelper<TIdentifier> databaseHelper)
         {
