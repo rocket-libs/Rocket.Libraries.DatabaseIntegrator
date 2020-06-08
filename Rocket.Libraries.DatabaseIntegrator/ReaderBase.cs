@@ -11,14 +11,16 @@ namespace Rocket.Libraries.DatabaseIntegrator
     public abstract class ReaderBase<TModel, TIdentifier> : IReaderBase<TModel, TIdentifier> where TModel : ModelBase<TIdentifier>
     {
 
-        private readonly IDatabaseHelper<TIdentifier> databaseHelper;
+        
 
 
         public ReaderBase(
             IDatabaseHelper<TIdentifier> databaseHelper)
         {
-            this.databaseHelper = databaseHelper;
+            DatabaseHelper = databaseHelper;
         }
+
+        protected IDatabaseHelper<TIdentifier> DatabaseHelper { get; }
 
         public abstract Task<TModel> GetByIdAsync(TIdentifier id, bool? showDeleted);
 
