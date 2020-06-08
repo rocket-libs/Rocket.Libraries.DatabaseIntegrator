@@ -89,7 +89,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
             };
         }
 
-private async Task<TModel> GetUpdatedModel (TModel model)
+            private async Task<TModel> GetUpdatedModel (TModel model)
             {
                 if (model.IsNew)
                 {
