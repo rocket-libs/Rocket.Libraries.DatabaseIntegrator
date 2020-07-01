@@ -17,7 +17,6 @@
 
         
         private readonly IConnectionProvider connectionOpener;
-        private readonly IDatabaseIntegrationEventHandlers<TIdentifier> eventHandlers;
         private readonly Action<string> fnLogSelects;
 
         private IDbTransaction _transaction;
@@ -31,12 +30,10 @@
         public DatabaseHelper (
             IOptions<DatabaseConnectionSettings> DatabaseConnectionSettingsOptions,
             ILogger<DatabaseHelper<TIdentifier>> logger,
-            IConnectionProvider connectionProvider,
-            IDatabaseIntegrationEventHandlers<TIdentifier> eventHandlers)
+            IConnectionProvider connectionProvider)
         {
             this.logger = logger;
             this.connectionOpener = connectionProvider;
-            this.eventHandlers = eventHandlers;
             this.databaseConnectionSettings = DatabaseConnectionSettingsOptions.Value;
             if (DatabaseConnectionSettings.IsDevelopment)
             {

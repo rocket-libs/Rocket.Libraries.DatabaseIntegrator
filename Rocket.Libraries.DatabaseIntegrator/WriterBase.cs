@@ -20,19 +20,16 @@ namespace Rocket.Libraries.DatabaseIntegrator
     {
         private readonly IDatabaseHelper<TIdentifier> databaseHelper;
         private readonly IReaderBase<TModel, TIdentifier> entityReader;
-        private readonly IDatabaseIntegrationEventHandlers<TIdentifier> databaseIntegrationEventHandlers;
 
         public WriterBase(
                 IDatabaseHelper<TIdentifier> databaseHelper,
-                IReaderBase<TModel, TIdentifier> entityReader,
-                IDatabaseIntegrationEventHandlers<TIdentifier> databaseIntegrationEventHandlers)
+                IReaderBase<TModel, TIdentifier> entityReader)
         {
             this.databaseHelper = databaseHelper;
             this.entityReader = entityReader;
-            this.databaseIntegrationEventHandlers = databaseIntegrationEventHandlers;
         }
 
-        public async Task<ValidationResponse<TIdentifier>> DeleteAsync(TIdentifier id)
+        public virtual async Task<ValidationResponse<TIdentifier>> DeleteAsync(TIdentifier id)
         {
             var record = await entityReader.GetByIdAsync(id, true);
             var noData = record == null;
@@ -40,7 +37,6 @@ namespace Rocket.Libraries.DatabaseIntegrator
             {
                 throw new Exception($"Could not find record with id '{id}'");
             }
-            databaseIntegrationEventHandlers.BeforeDelete(record);
             record.Deleted = true;
             await databaseHelper.SaveAsync(record);
             return new ValidationResponse<TIdentifier>
@@ -49,15 +45,13 @@ namespace Rocket.Libraries.DatabaseIntegrator
             };
         }
 
-        public async Task<ValidationResponse<TIdentifier>> InsertAsync(TModel model)
+        public virtual async Task<ValidationResponse<TIdentifier>> InsertAsync(TModel model)
         {
-            databaseIntegrationEventHandlers.BeforeCreate(model);
             return await WriteAsync(model, false);
         }
 
-        public async Task<ValidationResponse<TIdentifier>> UpdateAsync(TModel model)
+        public virtual async Task<ValidationResponse<TIdentifier>> UpdateAsync(TModel model)
         {
-            databaseIntegrationEventHandlers.BeforeUpdate(model);
             return await WriteAsync(model, true);
         }
 
