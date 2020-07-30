@@ -19,19 +19,20 @@ namespace Rocket.Libraries.DatabaseIntegrator
         where TModel : ModelBase<TIdentifier>
     {
         private readonly IDatabaseHelper<TIdentifier> databaseHelper;
-        private readonly IReaderBase<TModel, TIdentifier> entityReader;
+
+        public IReaderBase<TModel, TIdentifier> Reader { get; }
 
         public WriterBase(
                 IDatabaseHelper<TIdentifier> databaseHelper,
-                IReaderBase<TModel, TIdentifier> entityReader)
+                IReaderBase<TModel, TIdentifier> reader)
         {
             this.databaseHelper = databaseHelper;
-            this.entityReader = entityReader;
+            Reader = reader;
         }
 
         public virtual async Task<ValidationResponse<TIdentifier>> DeleteAsync(TIdentifier id)
         {
-            var record = await entityReader.GetByIdAsync(id, true);
+            var record = await Reader.GetByIdAsync(id, true);
             var noData = record == null;
             if (noData)
             {
@@ -91,7 +92,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
                 }
                 else
                 {
-                    var currentVersion = await entityReader.GetByIdAsync (model.Id, true);
+                    var currentVersion = await Reader.GetByIdAsync (model.Id, true);
                     return ModelUpdater.Update<TModel, TIdentifier> (currentVersion, model, null);
                 }
             }
