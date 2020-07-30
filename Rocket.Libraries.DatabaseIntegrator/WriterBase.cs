@@ -20,7 +20,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
     {
         private readonly IDatabaseHelper<TIdentifier> databaseHelper;
 
-        public IReaderBase<TModel, TIdentifier> Reader { get; }
+        private IReaderBase<TModel, TIdentifier> Reader { get; }
 
         public WriterBase(
                 IDatabaseHelper<TIdentifier> databaseHelper,
