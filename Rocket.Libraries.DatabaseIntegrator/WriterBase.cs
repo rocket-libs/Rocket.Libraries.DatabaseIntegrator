@@ -20,7 +20,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
         {
             private readonly IDatabaseHelper<TIdentifier> databaseHelper;
 
-        private IReaderBase<TModel, TIdentifier> Reader { get; }
+            protected IReaderBase<TModel, TIdentifier> Reader { get; }
 
             public WriterBase (
                 IDatabaseHelper<TIdentifier> databaseHelper,
@@ -28,7 +28,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
             {
                 this.databaseHelper = databaseHelper;
                 Reader = reader;
-        }
+            }
 
             public virtual async Task<ValidationResponse<TIdentifier>> DeleteAsync (TIdentifier id)
             {
@@ -39,7 +39,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
                     throw new Exception ($"Could not find record with id '{id}'");
                 }
                 record.Deleted = true;
-                await databaseHelper.SaveAsync (record,true);
+                await databaseHelper.SaveAsync (record, true);
                 return new ValidationResponse<TIdentifier>
                 {
                     Entity = id,
@@ -83,7 +83,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
                 {
                     model = await GetUpdatedModel (model);
                 }
-                await databaseHelper.SaveAsync (model,isUpdate);
+                await databaseHelper.SaveAsync (model, isUpdate);
                 return new ValidationResponse<TIdentifier>
                 {
                     Entity = model.Id,
