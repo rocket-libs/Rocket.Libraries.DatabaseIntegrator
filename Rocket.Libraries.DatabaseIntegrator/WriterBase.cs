@@ -20,7 +20,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
         {
             private readonly IDatabaseHelper<TIdentifier> databaseHelper;
 
-            private IReaderBase<TModel, TIdentifier> Reader { get; }
+        private IReaderBase<TModel, TIdentifier> Reader { get; }
 
             public WriterBase (
                 IDatabaseHelper<TIdentifier> databaseHelper,
@@ -28,7 +28,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
             {
                 this.databaseHelper = databaseHelper;
                 Reader = reader;
-            }
+        }
 
             public virtual async Task<ValidationResponse<TIdentifier>> DeleteAsync (TIdentifier id)
             {
@@ -48,7 +48,6 @@ namespace Rocket.Libraries.DatabaseIntegrator
 
             public virtual async Task<ValidationResponse<TIdentifier>> InsertAsync (TModel model)
             {
-                model.Id = (TIdentifier)Initialization.IdGenerator ();
                 return await WriteAsync (model, false);
             }
 

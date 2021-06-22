@@ -6,7 +6,14 @@ namespace Rocket.Libraries.DatabaseIntegrator
 {
     internal static class DapperConfigurations
     {
-        public static void InitializeDapper() => SqlMapperExtensions.TableNameMapper = GetTableName;
+        public static void InitializeDapper()
+        {
+            SqlMapperExtensions.TableNameMapper = GetTableName;
+            if (!string.IsNullOrEmpty(Initialization.DatabaseType))
+            {
+                SqlMapperExtensions.GetDatabaseType = conn => Initialization.DatabaseType;
+            }
+        }
 
         private static string GetTableName(Type type)
         {
