@@ -48,6 +48,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
 
             public virtual async Task<ValidationResponse<TIdentifier>> InsertAsync (TModel model)
             {
+                model.Id = (TIdentifier)Initialization.IdGenerator ();
                 return await WriteAsync (model, false);
             }
 
