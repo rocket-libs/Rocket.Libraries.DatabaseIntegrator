@@ -5,11 +5,11 @@ namespace Rocket.Libraries.DatabaseIntegrator
     public static class Initialization
     {
         internal static Func<object> IdGenerator;
-        public static IServiceCollection InitializeDatabaseIntegrator<TIdentifier, TConnectionProvider> (this IServiceCollection services, Func<TIdentifier> idGenerator, bool scopeSingleton = false)
+        public static IServiceCollection InitializeDatabaseIntegrator<TIdentifier, TConnectionProvider> (this IServiceCollection services, Func<TIdentifier> idGenerator, bool registerSingletons = false)
         where TConnectionProvider : class, IConnectionProvider
         {
 
-            if (scopeSingleton)
+            if (registerSingletons)
             {
                 services
                     .AddSingleton<IDatabaseHelper<TIdentifier>, DatabaseHelper<TIdentifier>> ()
