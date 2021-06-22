@@ -4,8 +4,11 @@ namespace Rocket.Libraries.DatabaseIntegrator
 {
     public static class Initialization
     {
-        internal static Func<object> IdGenerator;
-        public static IServiceCollection InitializeDatabaseIntegrator<TIdentifier, TConnectionProvider> (this IServiceCollection services, Func<TIdentifier> idGenerator, bool registerSingletons = false)
+        internal static string DatabaseType;
+        public static IServiceCollection InitializeDatabaseIntegrator<TIdentifier, TConnectionProvider> (
+            this IServiceCollection services, 
+            bool registerSingletons = false,
+            string databaseType = "")
         where TConnectionProvider : class, IConnectionProvider
         {
 
@@ -21,7 +24,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
                     .AddScoped<IDatabaseHelper<TIdentifier>, DatabaseHelper<TIdentifier>> ()
                     .AddScoped<IConnectionProvider, TConnectionProvider> ();
             }
-            Initialization.IdGenerator = () => idGenerator ();
+            Initialization.DatabaseType = databaseType;
             DapperConfigurations.InitializeDapper ();
             return services;
         }
