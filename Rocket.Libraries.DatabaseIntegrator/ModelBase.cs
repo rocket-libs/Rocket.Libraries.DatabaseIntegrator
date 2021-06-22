@@ -13,11 +13,11 @@
         public virtual TIdentifier Id { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether the data in this record has been saved to the database or not.
+        /// Gets a value indicating whether the data in this record has a unique id.
         /// </summary>
         [JsonIgnore]
         [Computed]
-        public bool IsNew => EqualityComparer<TIdentifier>.Default.Equals (Id, default);
+        public bool HasNoId => EqualityComparer<TIdentifier>.Default.Equals (Id, default);
 
         /// <summary>
         /// Gets or sets a value indicating whether this record is 'soft-deleted' or not

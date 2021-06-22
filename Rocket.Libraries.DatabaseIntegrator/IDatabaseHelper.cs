@@ -20,7 +20,7 @@
 
         void RollBackTransaction();
 
-        Task SaveAsync<TModel>(TModel model)
+        Task SaveAsync<TModel>(TModel model, bool isUpdate)
             where TModel : ModelBase<TIdentifier>;
     }
 }

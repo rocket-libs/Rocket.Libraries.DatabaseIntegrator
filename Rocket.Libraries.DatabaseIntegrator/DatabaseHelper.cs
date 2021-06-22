@@ -87,17 +87,17 @@
 
         
 
-        public async Task SaveAsync<TModel> (TModel model)
+        public async Task SaveAsync<TModel> (TModel model, bool isUpdate)
         where TModel : ModelBase<TIdentifier>
         {
-            if (model.IsNew)
+            if (isUpdate)
             {
-                model.Created = DateTime.Now;
-                await Connection.InsertAsync (model, transaction : _transaction);
+                await Connection.UpdateAsync (model, transaction : _transaction);
             }
             else
             {
-                await Connection.UpdateAsync (model, transaction : _transaction);
+                model.Created = DateTime.Now;
+                await Connection.InsertAsync (model, transaction : _transaction);
             }
         }
 

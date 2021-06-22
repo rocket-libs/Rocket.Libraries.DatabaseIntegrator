@@ -39,7 +39,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
                     throw new Exception ($"Could not find record with id '{id}'");
                 }
                 record.Deleted = true;
-                await databaseHelper.SaveAsync (record);
+                await databaseHelper.SaveAsync (record,true);
                 return new ValidationResponse<TIdentifier>
                 {
                     Entity = id,
@@ -75,7 +75,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
                 {
                     throw new DatabaseIntegratorException ("No data was supplied for saving.");
                 }
-                else if (model.IsNew && isUpdate)
+                else if (model.HasNoId && isUpdate)
                 {
                     throw new DatabaseIntegratorException ("No Id was specified for the record to be updated.");
                 }
@@ -83,7 +83,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
                 {
                     model = await GetUpdatedModel (model);
                 }
-                await databaseHelper.SaveAsync (model);
+                await databaseHelper.SaveAsync (model,isUpdate);
                 return new ValidationResponse<TIdentifier>
                 {
                     Entity = model.Id,
@@ -93,7 +93,7 @@ namespace Rocket.Libraries.DatabaseIntegrator
 
             private async Task<TModel> GetUpdatedModel (TModel model)
             {
-                if (model.IsNew)
+                if (model.HasNoId)
                 {
                     return model;
                 }
