@@ -80,10 +80,6 @@ namespace Rocket.Libraries.DatabaseIntegrator
                 {
                     throw new DatabaseIntegratorException ("No Id was specified for the record to be updated.");
                 }
-                else if (isUpdate == false && model.IsNew == false)
-                {
-                    throw new DatabaseIntegratorException ("An Id was specified during a create operation. New records should not be submitted with Ids");
-                }
                 if (isUpdate)
                 {
                     model = await GetUpdatedModel (model);
