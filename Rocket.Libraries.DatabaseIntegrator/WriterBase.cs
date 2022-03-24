@@ -15,16 +15,17 @@ namespace Rocket.Libraries.DatabaseIntegrator
             Task<ValidationResponse<TIdentifier>> UpdateAsync (TModel model);
         }
 
-    public abstract class WriterBase<TModel, TIdentifier> : IWriterBase<TModel, TIdentifier>
+    public abstract class WriterBase<TModel, TIdentifier, TReader> : IWriterBase<TModel, TIdentifier>
         where TModel : ModelBase<TIdentifier>
+        where TReader : IReaderBase<TModel, TIdentifier>
         {
             private readonly IDatabaseHelper<TIdentifier> databaseHelper;
 
-            protected IReaderBase<TModel, TIdentifier> Reader { get; }
+            protected TReader Reader { get; }
 
             public WriterBase (
                 IDatabaseHelper<TIdentifier> databaseHelper,
-                IReaderBase<TModel, TIdentifier> reader)
+                TReader reader)
             {
                 this.databaseHelper = databaseHelper;
                 Reader = reader;
