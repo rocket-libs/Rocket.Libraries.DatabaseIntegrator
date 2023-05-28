@@ -1,6 +1,7 @@
 ﻿namespace Rocket.Libraries.DatabaseIntegrator
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Threading.Tasks;
     using Rocket.Libraries.DatabaseIntegrator.Tests;
@@ -13,9 +14,10 @@
 
         Task<int> ExecuteAsync(string sql, object param = null);
         [ExcludeFromCoverage]
-        Task<ImmutableList<TModel>> GetManyAsync<TModel>(string query);
+        Task<ImmutableList<TModel>> GetManyAsync<TModel>(string query, Dictionary<string, object> parameters = null);
         Task<TModel> GetSingleAsync<TModel>(
-            string query)
+            string query,
+            Dictionary<string, object> parameters = null)
             where TModel : ModelBase<TIdentifier>;
 
         void RollBackTransaction();
