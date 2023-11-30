@@ -6,18 +6,18 @@
 
     internal static class ModelUpdater
     {
-        public static TModel Update<TModel,TIdentifier>(TModel oldModel, TModel newModel, ImmutableList<string> notForUpdate)
+        public static TModel Update<TModel, TIdentifier>(TModel oldModel, TModel newModel, ImmutableList<string> notForUpdate)
             where TModel : ModelBase<TIdentifier>
         {
             notForUpdate = notForUpdate ?? ImmutableList<string>.Empty;
             notForUpdate = notForUpdate.Add(nameof(ModelBase<TIdentifier>.Created))
                 .Add(nameof(ModelBase<TIdentifier>.Id));
 
-            if(oldModel == null)
+            if (oldModel == null)
             {
                 throw new DatabaseIntegratorException("Old data to be updated was not supplied");
             }
-            else if(newModel == null)
+            else if (newModel == null)
             {
                 throw new DatabaseIntegratorException("New data to use for updating was not supplied");
             }
@@ -32,7 +32,12 @@
 
             foreach (var singlePropertyToUpdate in manyPropertiesToUpdate)
             {
-                if (singlePropertyToUpdate.PropertyType != typeof(Guid))
+                bool shouldUpdate = true;
+                if (Initialization.PreserveGuidValuesDuringUpdate)
+                {
+                    shouldUpdate = singlePropertyToUpdate.PropertyType != typeof(Guid);
+                }
+                if (shouldUpdate)
                 {
                     var newValue = singlePropertyToUpdate.GetValue(newModel);
                     singlePropertyToUpdate.SetValue(oldModel, newValue);
