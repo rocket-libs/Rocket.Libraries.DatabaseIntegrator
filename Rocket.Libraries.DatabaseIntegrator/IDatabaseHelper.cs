@@ -10,7 +10,7 @@
     /// Represents a helper interface for interacting with a database.
     /// </summary>
     /// <typeparam name="TIdentifier">The type of the identifier used in the database.</typeparam>
-    public interface IDatabaseHelper<TIdentifier>
+    public interface IDatabaseHelper<TIdentifier> : IDisposable
     {
         /// <summary>
         /// Begins a database transaction.
