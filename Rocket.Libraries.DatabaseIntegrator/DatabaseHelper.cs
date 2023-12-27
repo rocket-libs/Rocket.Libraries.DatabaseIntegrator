@@ -74,6 +74,12 @@ namespace Rocket.Libraries.DatabaseIntegrator
         }
 
         [ExcludeFromCoverage]
+        public async Task<T> ExecuteScalarAsync<T>(string sql, object param = null)
+        {
+            return await Connection.ExecuteScalarAsync<T>(sql, param, _transaction);
+        }
+
+        [ExcludeFromCoverage]
         public async Task<TModel> GetSingleAsync<TModel>(string query, Dictionary<string, object> parameters = null)
             where TModel : ModelBase<TIdentifier>
         {
